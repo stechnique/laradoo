@@ -121,6 +121,13 @@ class Odoo
      */
     protected $fields;
 
+    /**
+     * context to be passed
+     *
+     * @var array
+     */
+    protected $context;
+
 
     /**
      * Create a new Odoo instance
@@ -230,6 +237,19 @@ class Odoo
         return $this;
     }
 
+     /**
+     * Set context to pass.
+     *
+     * @param array $fields
+     * @return $this
+     */
+    public function context($fields)
+    {
+        $this->context = is_array($fields) ? $fields : func_get_args();
+
+        return $this;
+    }
+
     /**
      * Get the ids of the models.
      *
@@ -294,12 +314,12 @@ class Odoo
         if (is_string($ids))
             throw new OdooException($ids);
 
-        $params = $this->buildParams('fields');
+        $params = $this->buildParams('fields', 'context');
 
         $result = $this->call($model, $method, [$ids->toArray()], $params);
 
         //Reset params for future queries.
-        $this->resetParams('fields');
+        $this->resetParams('fields', 'context');
 
         return $this->makeResponse($result);
     }
